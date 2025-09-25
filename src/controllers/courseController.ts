@@ -1,17 +1,16 @@
 import { NextFunction, Request, Response } from "express";
-import { courseService } from "../services/CourseService.ts";
-import { AuthRequest } from "../types/AuthRequest.ts";
-import {
-  BadRequestError,
-  NotFoundError,
-  UnauthorizedError,
-} from "../utils/appError.ts";
-import { successResponse } from "../utils/Response.ts";
-import { asyncHandler } from "../middlewares/AsyncHandler.ts";
+import { courseService } from "../services/courseService.ts";
+import { AuthRequest } from "../types/authRequest.ts";
+import { NotFoundError, UnauthorizedError } from "../utils/appError.ts";
+import { successResponse } from "../utils/response.ts";
+import { asyncHandler } from "../middlewares/asyncHandler.ts";
 
-async function createCourse(req: AuthRequest, res: Response, next: NextFunction) {
+async function createCourse(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
   if (!req.user) throw new UnauthorizedError();
-
   const course = await courseService.createCourse(req.user.id, req.body);
 
   return successResponse(res, course, 201, "Course created successfully");
@@ -19,10 +18,6 @@ async function createCourse(req: AuthRequest, res: Response, next: NextFunction)
 
 async function updateCourse(req: Request, res: Response, next: NextFunction) {
   const courseId = parseInt(req.params.courseId, 10);
-  if (isNaN(courseId)) {
-    throw new BadRequestError("Invalid course ID");
-  }
-
   const course = await courseService.updateCourse(courseId, req.body);
 
   return successResponse(res, course, 200, "Course updated successfully");
@@ -30,13 +25,9 @@ async function updateCourse(req: Request, res: Response, next: NextFunction) {
 
 async function deleteCourse(req: Request, res: Response, next: NextFunction) {
   const courseId = parseInt(req.params.courseId, 10);
-  if (isNaN(courseId)) {
-    throw new BadRequestError("Invalid course ID");
-  }
+  await courseService.deleteCourse(courseId);
 
-  const course = await courseService.deleteCourse(courseId);
-
-  return successResponse(res, course, 200, "Course deleted successfully");
+  return successResponse(res, null, 200, "Course deleted successfully");
 }
 
 async function getCourses(req: Request, res: Response, next: NextFunction) {
@@ -45,7 +36,27 @@ async function getCourses(req: Request, res: Response, next: NextFunction) {
   return successResponse(res, courses, 200, "Course fetched successfully");
 }
 
-async function getCoursesForStudent(req: AuthRequest, res: Response, next: NextFunction) {
+export async function getCourseDetails(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const courseId = Number(req.params.courseId);
+  const course = await courseService.getCourseDetails(courseId);
+
+  return successResponse(
+    res,
+    course,
+    200,
+    "Course details fetched successfully"
+  );
+}
+
+async function getCoursesForStudent(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
   if (!req.user) throw new UnauthorizedError();
 
   const courses = await courseService.getCoursesForStudent(req.user.id);
@@ -58,14 +69,14 @@ async function getCoursesForStudent(req: AuthRequest, res: Response, next: NextF
   );
 }
 
-async function getCourseDetailsForStudent(req: AuthRequest, res: Response, next: NextFunction) {
+async function getCourseDetailsForStudent(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
   if (!req.user) throw new UnauthorizedError();
 
   const courseId = parseInt(req.params.courseId, 10);
-  if (isNaN(courseId)) {
-    throw new BadRequestError("Invalid course ID");
-  }
-
   const course = await courseService.getCourseDetailsForStudent(
     courseId,
     req.user.id
@@ -83,7 +94,11 @@ async function getCourseDetailsForStudent(req: AuthRequest, res: Response, next:
   );
 }
 
-async function getCoursesForTeacher(req: AuthRequest, res: Response, next: NextFunction) {
+async function getCoursesForTeacher(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
   if (!req.user) throw new UnauthorizedError();
 
   const courses = await courseService.getCoursesForTeacher(req.user.id);
@@ -96,14 +111,14 @@ async function getCoursesForTeacher(req: AuthRequest, res: Response, next: NextF
   );
 }
 
-async function getCourseDetailsForTeacher(req: AuthRequest, res: Response, next: NextFunction) {
+async function getCourseDetailsForTeacher(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
   if (!req.user) throw new UnauthorizedError();
 
   const courseId = parseInt(req.params.courseId, 10);
-  if (isNaN(courseId)) {
-    throw new BadRequestError("Invalid course ID");
-  }
-
   const course = await courseService.getCourseDetailsForTeacher(
     courseId,
     req.user.id
@@ -124,6 +139,7 @@ export const CourseController = {
   updateCourse: asyncHandler(updateCourse),
   deleteCourse: asyncHandler(deleteCourse),
   getCourses: asyncHandler(getCourses),
+  getCourseDetails: asyncHandler(getCourseDetails),
   getCoursesForStudent: asyncHandler(getCoursesForStudent),
   getCourseDetailsForStudent: asyncHandler(getCourseDetailsForStudent),
   getCoursesForTeacher: asyncHandler(getCoursesForTeacher),

@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User.ts";
 import { env } from "../config/env.ts";
-import { saveFile } from "./UploadService.ts";
+import { saveFile } from "./uploadService.ts";
 import { BadRequestError, NotFoundError } from "../utils/appError.ts";
 
 class UserService {

@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { LessonController } from "../controllers/LessonController.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
-import { LessonCreateSchema, LessonUpdateSchema } from "../schemas/LessonSchema.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+import { LessonController } from "../controllers/lessonController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
+import { CreateLessonDto, UpdateLessonDto } from "../dtos/lesson/lessonInputDto.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 const router = Router();
 
@@ -15,13 +15,13 @@ router.get(
 router.post(
   "/",
   authorize(["teacher", "admin"]),
-  validateBody(LessonCreateSchema),
+  validateBody(CreateLessonDto),
   LessonController.createLesson
 );
 router.put(
   "/:lessonId",
   authorize(["teacher", "admin"]),
-  validateBody(LessonUpdateSchema),
+  validateBody(UpdateLessonDto),
   verifyIds({ params: ["lessonId"] }),
   LessonController.updateLesson
 );

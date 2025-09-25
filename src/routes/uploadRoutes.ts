@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { upload } from "../lib/Upload.ts";
-import { uploadFile } from "../controllers/UploadController.ts";
+import { upload } from "../lib/upload.ts";
+import { uploadFile } from "../controllers/uploadController.ts";
 
 const router = Router();
 

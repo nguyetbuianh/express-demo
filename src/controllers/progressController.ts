@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from "express";
-import { progressService } from "../services/ProgressService.ts";
-import { AuthRequest } from "../types/AuthRequest.ts";
+import { progressService } from "../services/progressService.ts";
+import { AuthRequest } from "../types/authRequest.ts";
 import {
   BadRequestError,
   ForbiddenError,
   NotFoundError,
   UnauthorizedError,
 } from "../utils/appError.ts";
-import { successResponse } from "../utils/Response.ts";
-import { asyncHandler } from "../middlewares/AsyncHandler.ts";
+import { successResponse } from "../utils/response.ts";
+import { asyncHandler } from "../middlewares/asyncHandler.ts";
 
 async function createProgress(
   req: AuthRequest,

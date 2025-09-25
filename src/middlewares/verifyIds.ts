@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequestError, UnauthorizedError } from "../utils/appError.ts";
-import { AuthRequest } from "../types/AuthRequest.ts";
+import { AuthRequest } from "../types/authRequest.ts";
 
 export function verifyIds(options: { user?: boolean; params?: string[] }) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {

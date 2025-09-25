@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { BadRequestError, UnauthorizedError } from "../utils/appError.ts";
 
 export const authenticate = (
   req: Request,
@@ -7,7 +8,7 @@ export const authenticate = (
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: "No token provided" });
+  if (!authHeader) throw new UnauthorizedError("No token provided");
 
   const token = authHeader.split(" ")[1];
   try {
@@ -15,6 +16,6 @@ export const authenticate = (
     (req as any).user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ error: "Invalid token" });
+    throw new BadRequestError("Invalid token");
   }
 };

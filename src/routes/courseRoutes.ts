@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { CourseController } from "../controllers/CourseController.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
-import { CourseCreateSchema, CourseUpdateSchema } from "../schemas/CourseSchema.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+import { CourseController } from "../controllers/courseController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
+import { CreateCourseDto, UpdateCourseDto } from "../dtos/course/courseInputDto.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 const router = Router();
 
@@ -12,18 +12,23 @@ router.get(
   authorize(["admin"]),
   CourseController.getCourses
 );
+router.get(
+  "/details/:courseId",
+  authorize(["admin"]),
+  CourseController.getCourseDetails
+);
 
 router.post(
   "/",
   authorize(["teacher", "admin"]),
-  validateBody(CourseCreateSchema),
+  validateBody(CreateCourseDto),
   verifyIds({ user: true}),
   CourseController.createCourse
 );
 router.put(
   "/:courseId",
   authorize(["teacher", "admin"]),
-  validateBody(CourseUpdateSchema),
+  validateBody(UpdateCourseDto),
   verifyIds({ params: ["courseId"] }),
   CourseController.updateCourse
 );

@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { VocabularyController } from "../controllers/VocabularyController.ts";
-import { authenticate } from "../middlewares/Authenticate.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
-import { VocabularyCreateSchema } from "../schemas/VocabularySchema.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+import { VocabularyController } from "../controllers/vocabularyController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
+import { VocabularyCreateSchema } from "../dtos/vocabularySchema.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 const router = Router();
 

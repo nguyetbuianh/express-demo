@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { ProgressController } from "../controllers/ProgressController.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { ProgressCreateSchema, ProgressUpdateSchema } from "../schemas/ProgressSchema.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+import { ProgressController } from "../controllers/progressController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { ProgressCreateSchema, ProgressUpdateSchema } from "../dtos/progressSchema.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 const router = Router();
 

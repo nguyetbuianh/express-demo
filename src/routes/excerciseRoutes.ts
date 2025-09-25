@@ -1,19 +1,19 @@
 import { Router } from "express";
-import { ExerciseController } from "../controllers/ExerciseController.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
+import { ExerciseController } from "../controllers/exerciseController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
 import {
-  ExerciseCreateSchema,
-  ExerciseUpdateSchema,
-} from "../schemas/ExerciseSchema.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+  CreateExerciseDto,
+  UpdateExerciseDto,
+} from "../dtos/exercise/exerciseInputDto.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 const router = Router();
 
 router.post(
   "/:lessonId",
   authorize(["admin", "teacher"]),
-  validateBody(ExerciseCreateSchema),
+  validateBody(CreateExerciseDto),
   verifyIds({ params: ["lessonId"] }),
   ExerciseController.createExercise
 );
@@ -32,7 +32,7 @@ router.get(
 router.put(
   "/:exerciseId",
   authorize(["admin", "teacher"]),
-  validateBody(ExerciseUpdateSchema),
+  validateBody(UpdateExerciseDto),
   verifyIds({ params: ["exerciseId"] }),
   ExerciseController.updateExercise
 );

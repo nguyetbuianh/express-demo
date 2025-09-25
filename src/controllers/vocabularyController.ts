@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { vocabularyService } from "../services/VocabulayService.ts";
+import { vocabularyService } from "../services/vocabulayService.ts";
 import { BadRequestError, NotFoundError } from "../utils/appError.ts";
-import { successResponse } from "../utils/Response.ts";
-import { asyncHandler } from "../middlewares/AsyncHandler.ts";
+import { asyncHandler } from "../middlewares/asyncHandler.ts";
+import { successResponse } from "../utils/response.ts";
 
 async function createVocabulary(
   req: Request,

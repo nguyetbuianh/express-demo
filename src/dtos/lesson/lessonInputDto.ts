@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const LessonCreateSchema = z.object({
+export const CreateLessonDto = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   content: z.string().optional(),
   videoUrl: z.string().url({ message: "Video URL must be valid" }).optional(),
@@ -9,5 +9,7 @@ export const LessonCreateSchema = z.object({
   courseId: z.number(),
 });
 
-export const LessonUpdateSchema = LessonCreateSchema.partial();
+export const UpdateLessonDto = CreateLessonDto.partial();
 
+export type CreateLessonDtoType = z.infer<typeof CreateLessonDto>;
+export type UpdateLessonDtoType = z.infer<typeof UpdateLessonDto>;

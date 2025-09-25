@@ -3,6 +3,17 @@ import { Exercise } from "../models/Exercise.ts";
 import { Lesson } from "../models/Lesson.ts";
 import { ExerciseOption } from "../models/ExerciseOption.ts";
 import { NotFoundError } from "../utils/appError.ts";
+import {
+  CreateExerciseDto,
+  CreateExerciseDtoType,
+} from "../dtos/exercise/exerciseInputDto.ts";
+import { CreateExerciseOptionDtoType } from "../dtos/exerciseOption/exerciseOptionInputDto.ts";
+import {
+  ExerciseDetailResponseDto,
+  ExerciseDetailResponseDtoType,
+  ExerciseResponseDto,
+  ExerciseResponseDtoType,
+} from "../dtos/exercise/exerciseResponseDto.ts";
 class ExerciseService {
   private exerciseRepo = AppDataSource.getRepository(Exercise);
   private lessonRepo = AppDataSource.getRepository(Lesson);
@@ -10,9 +21,9 @@ class ExerciseService {
 
   async createExercise(
     lessonId: number,
-    exerciseData: Partial<Exercise>,
-    options?: Partial<ExerciseOption>[]
-  ) {
+    exerciseData: CreateExerciseDtoType,
+    options?: CreateExerciseOptionDtoType[]
+  ): Promise<ExerciseResponseDtoType> {
     const lesson = await this.lessonRepo.findOne({ where: { id: lessonId } });
     if (!lesson) throw new NotFoundError("Lesson not found");
 
@@ -27,29 +38,39 @@ class ExerciseService {
       savedExercise.options = opts;
     }
 
-    return savedExercise;
+    return ExerciseResponseDto.parse(savedExercise);
   }
 
-  async getExercisesByLesson(lessonId: number) {
-    return await this.exerciseRepo.find({
+  async getExercisesByLesson(
+    lessonId: number
+  ): Promise<ExerciseResponseDtoType[]> {
+    const exercises = await this.exerciseRepo.find({
       where: { lesson: { id: lessonId } },
       relations: ["options", "lesson"],
     });
+
+    return exercises.map((exercises) => ExerciseResponseDto.parse(exercises));
   }
 
-  async getExerciseById(exerciseId: number) {
-    return await this.exerciseRepo.findOne({
+  async getExerciseById(
+    exerciseId: number
+  ): Promise<ExerciseDetailResponseDtoType> {
+    const exercises = await this.exerciseRepo.findOne({
       where: { id: exerciseId },
       relations: ["options", "lesson"],
     });
+
+    return ExerciseDetailResponseDto.parse(exercises);
   }
 
   async updateExercise(
     exerciseId: number,
-    exerciseData: Partial<Exercise>,
-    options?: Partial<ExerciseOption>[]
-  ) {
-    const exercise = await this.exerciseRepo.findOne({ where: { id: exerciseId } });
+    exerciseData: CreateExerciseDtoType,
+    options?: CreateExerciseOptionDtoType[]
+  ): Promise<ExerciseResponseDtoType> {
+    const exercise = await this.exerciseRepo.findOne({
+      where: { id: exerciseId },
+    });
     if (!exercise) throw new NotFoundError("Exercise not found");
 
     Object.assign(exercise, exerciseData);
@@ -64,14 +85,15 @@ class ExerciseService {
       exercise.options = opts;
     }
 
-    return exercise;
+    return ExerciseResponseDto.parse(exercise);
   }
 
-  async deleteExercise(exerciseId: number) {
-    const exercise = await this.exerciseRepo.findOne({ where: { id: exerciseId } });
-    if (!exercise) throw new NotFoundError("Exercise not found");
+  async deleteExercise(exerciseId: number): Promise<void> {
+    const result = await this.exerciseRepo.delete(exerciseId);
 
-    return await this.exerciseRepo.remove(exercise);
+    if (result.affected === 0) {
+      throw new NotFoundError("Exercise not found");
+    }
   }
 }
 

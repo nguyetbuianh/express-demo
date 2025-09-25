@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { userService } from "../services/UserService.ts";
-import { successResponse } from "../utils/Response.ts";
-import { asyncHandler } from "../middlewares/AsyncHandler.ts";
+import { userService } from "../services/userService.ts";
+import { successResponse } from "../utils/response.ts";
+import { asyncHandler } from "../middlewares/asyncHandler.ts";
 import { BadRequestError } from "../utils/appError.ts";
 
 async function register(req: Request, res: Response, next: NextFunction) {

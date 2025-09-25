@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { PaymentController } from "../controllers/PaymentController.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
-import { PaymentCreateSchema, PaymentUpdateStatusSchema } from "../schemas/PaymentSchema.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+import { PaymentController } from "../controllers/paymentController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
+import { CreatePaymentDto, UpdatePaymentStatusDto } from "../dtos/payment/paymentInputDto.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 
 const router = Router();
@@ -16,15 +16,15 @@ router.get(
 router.post(
   "/",
   authorize(["student"]),
-  validateBody(PaymentCreateSchema),
+  validateBody(CreatePaymentDto),
   verifyIds({ user: true}),
   PaymentController.createPayment
 );
 router.patch(
   "/:paymentId/status",
   authorize(["admin", "teacher"]),
-  validateBody(PaymentUpdateStatusSchema),
-  verifyIds({ params: ["courseId"] }),
+  validateBody(UpdatePaymentStatusDto),
+  verifyIds({ params: ["paymentId"] }),
   PaymentController.updatePaymentStatus
 );
 router.get(

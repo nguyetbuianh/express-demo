@@ -1,7 +1,5 @@
 import { AppDataSource } from "../config/DataSource.ts";
 import { Progress } from "../models/Progress.ts";
-import { User } from "../models/User.ts";
-import { Lesson } from "../models/Lesson.ts";
 import { NotFoundError } from "../utils/appError.ts";
 
 class ProgressService {

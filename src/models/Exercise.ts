@@ -37,6 +37,6 @@ export class Exercise extends BaseEntity {
   })
   lesson!: Lesson;
 
-  @OneToMany(() => ExerciseOption, (option: ExerciseOption) => option.exercise)
+  @OneToMany(() => ExerciseOption, (option: ExerciseOption) => option.exercise, { cascade: true })
   options!: ExerciseOption[];
 }

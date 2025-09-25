@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { UserController } from "../controllers/UsersController.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts"; 
-import { LoginSchema, RegisterSchema } from "../schemas/UserSchema.ts";
-import { upload } from "../lib/Upload.ts";
+import { UserController } from "../controllers/usersController.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts"; 
+import { LoginSchema, RegisterSchema } from "../dtos/userSchema.ts";
+import { upload } from "../lib/upload.ts";
 
 const router = Router();
 

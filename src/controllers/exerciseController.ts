@@ -1,20 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { exerciseService } from "../services/ExerciseService.ts";
-import { BadRequestError, NotFoundError } from "../utils/appError.ts";
-import { successResponse } from "../utils/Response.ts";
-import { asyncHandler } from "../middlewares/AsyncHandler.ts";
+import { exerciseService } from "../services/exerciseService.ts";
+import { successResponse } from "../utils/response.ts";
+import { asyncHandler } from "../middlewares/asyncHandler.ts";
+import { NotFoundError } from "../utils/appError.ts";
 
 async function createExercise(req: Request, res: Response, next: NextFunction) {
   const lessonId = parseInt(req.params.lessonId, 10);
-  if (isNaN(lessonId)) {
-    throw new BadRequestError("Invalid lesson id");
-  }
-
   const { question, type, options } = req.body;
-  if (!question || !type) {
-    throw new BadRequestError("Question and type are required");
-  }
-
   const exercise = await exerciseService.createExercise(
     lessonId,
     { question, type },
@@ -30,10 +22,6 @@ async function getExercisesByLesson(
   next: NextFunction
 ) {
   const lessonId = parseInt(req.params.lessonId, 10);
-  if (isNaN(lessonId)) {
-    throw new BadRequestError("Invalid lesson id");
-  }
-
   const exercises = await exerciseService.getExercisesByLesson(lessonId);
   if (!exercises || exercises.length === 0) {
     throw new NotFoundError("No exercises found for this lesson");
@@ -48,10 +36,6 @@ async function getExerciseById(
   next: NextFunction
 ) {
   const exerciseId = parseInt(req.params.exerciseId, 10);
-  if (isNaN(exerciseId)) {
-    throw new BadRequestError("Invalid exercise id");
-  }
-
   const exercise = await exerciseService.getExerciseById(exerciseId);
   if (!exercise) {
     throw new NotFoundError("Exercise not found");
@@ -62,10 +46,6 @@ async function getExerciseById(
 
 async function updateExercise(req: Request, res: Response, next: NextFunction) {
   const exerciseId = parseInt(req.params.exerciseId, 10);
-  if (isNaN(exerciseId)) {
-    throw new BadRequestError("Invalid exercise id");
-  }
-
   const { question, type, options } = req.body;
   const updatedExercise = await exerciseService.updateExercise(
     exerciseId,
@@ -83,10 +63,6 @@ async function updateExercise(req: Request, res: Response, next: NextFunction) {
 
 async function deleteExercise(req: Request, res: Response) {
   const exerciseId = parseInt(req.params.exerciseId, 10);
-  if (isNaN(exerciseId)) {
-    throw new BadRequestError("Invalid exercise id");
-  }
-
   await exerciseService.deleteExercise(exerciseId);
 
   return successResponse(res, null, 200, "Exercises deleted successfully");
