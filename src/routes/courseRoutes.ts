@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { CourseController } from "../controllers/CourseController.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
-import { CourseCreateSchema, CourseUpdateSchema } from "../schemas/CourseSchema.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+import { CourseController } from "../controllers/courseController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
+import { CreateCourseDto, UpdateCourseDto } from "../dtos/course/courseInputDto.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 const router = Router();
 
@@ -12,25 +12,29 @@ router.get(
   authorize(["admin"]),
   CourseController.getCourses
 );
+router.get(
+  "/details/:courseId",
+  authorize(["admin"]),
+  CourseController.getCourseDetails
+);
 
 router.post(
   "/",
   authorize(["teacher", "admin"]),
-  validateBody(CourseCreateSchema),
-  verifyIds({ user: true}),
+  validateBody(CreateCourseDto),
   CourseController.createCourse
 );
 router.put(
   "/:courseId",
   authorize(["teacher", "admin"]),
-  validateBody(CourseUpdateSchema),
-  verifyIds({ params: ["courseId"] }),
+  validateBody(UpdateCourseDto),
+  verifyIds(["courseId"]),
   CourseController.updateCourse
 );
 router.delete(
   "/:courseId",
   authorize(["teacher", "admin"]),
-  verifyIds({ params: ["courseId"] }),  
+  verifyIds(["courseId"]),  
   CourseController.deleteCourse
 );
 
@@ -42,7 +46,7 @@ router.get(
 router.get(
   "/student/:courseId",
   authorize(["student"]),
-  verifyIds({ user: true, params: ["courseId"] }),
+  verifyIds(["courseId"]),
   CourseController.getCourseDetailsForStudent
 );
 router.get(
@@ -53,7 +57,7 @@ router.get(
 router.get(
   "/teacher/:courseId",
   authorize(["teacher"]),
-  verifyIds({ user: true, params: ["courseId"] }),
+  verifyIds(["courseId"]),
   CourseController.getCourseDetailsForTeacher
 );
 

@@ -20,7 +20,7 @@ export class User extends BaseEntity {
   @Column({ type: "text", unique: true })
   email!: string;
 
-  @Column({ type: "text", select: false })
+  @Column({ type: "text" })
   password!: string;
 
   @Column({ name: "full_name", type: "text", nullable: true })
@@ -39,12 +39,11 @@ export class User extends BaseEntity {
   @Column({
     name: "refresh_token",
     type: "text",
-    nullable: true,
-    select: false,
+    nullable: true
   })
   refreshToken!: string | null;
 
-  @OneToMany(() => Course, (course: Course) => course.teacher)
+  @OneToMany(() => Course, (course) => course.teacher)
   courses!: Course[];
 
   @OneToMany(() => Progress, (progress) => progress.user)

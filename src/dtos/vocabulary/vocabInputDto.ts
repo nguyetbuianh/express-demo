@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const VocabularyCreateSchema = z.object({
+export const CreateVocabularyDto = z.object({
   word: z.string().min(1, "Word is required"),
   meaning: z.string().min(1, "Meaning is required"),
   example: z.string().optional(),
@@ -8,5 +8,7 @@ export const VocabularyCreateSchema = z.object({
   image_url: z.string().url({ message: "Image URL must be valid" }).optional(),
 });
 
-export const VocabularyUpdateSchema = VocabularyCreateSchema.partial();
+export const UpdateVocabularyDto = CreateVocabularyDto.partial();
 
+export type CreateVocabularyDtoType = z.infer<typeof CreateVocabularyDto>;
+export type UpdateVocabularyDtoType = z.infer<typeof UpdateVocabularyDto>;

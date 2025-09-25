@@ -32,11 +32,11 @@ export class Exercise extends BaseEntity {
   })
   type!: TypeQuestion;
 
-  @ManyToOne(() => Lesson, (lesson: Lesson) => lesson.exercises, {
+  @ManyToOne(() => Lesson, (lesson) => lesson.exercises, {
     onDelete: "CASCADE",
   })
   lesson!: Lesson;
 
-  @OneToMany(() => ExerciseOption, (option: ExerciseOption) => option.exercise)
+  @OneToMany(() => ExerciseOption, (option) => option.exercise, { cascade: true })
   options!: ExerciseOption[];
 }

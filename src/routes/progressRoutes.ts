@@ -1,60 +1,58 @@
 import { Router } from "express";
-import { ProgressController } from "../controllers/ProgressController.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { ProgressCreateSchema, ProgressUpdateSchema } from "../schemas/ProgressSchema.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+import { ProgressController } from "../controllers/progressController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { CreateProgressDto, UpdateProgressDto } from "../dtos/progress/progressInputDtp.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 const router = Router();
 
 router.post(
   "/",
   authorize(["student"]),
-  validateBody(ProgressCreateSchema),
-  verifyIds({ user: true }),
+  validateBody(CreateProgressDto),
   ProgressController.createProgress
-);
+); 
 router.get(
   "/my-progress",
   authorize(["student"]),
-  verifyIds({ user: true }),
   ProgressController.getProgressOfUser
 );
 router.get(
   "/lesson/:lessonId/my-progress",
   authorize(["student"]),
-  verifyIds({ user: true, params: ["lessonId"] }),
+  verifyIds(["lessonId"]),
   ProgressController.getProgressForLessonOfUser
 );
 router.get(
   "/:progressId",
   authorize(["student", "teacher"]),
-  verifyIds({ params: ["progressId"] }),
+  verifyIds(["progressId"]),
   ProgressController.getProgressById
 );
 router.put(
   "/:progressId",
   authorize(["student"]),
-  validateBody(ProgressUpdateSchema),
-  verifyIds({ user: true, params: ["lessonId"] }),
+  validateBody(UpdateProgressDto),
+  verifyIds(["progressId"]),
   ProgressController.updateProgress
 );
 router.get(
   "/user/:userId",
   authorize(["admin", "teacher"]),
-  verifyIds({ params: ["userId"] }),
+  verifyIds(["userId"]),
   ProgressController.getProgressByUser
 );
 router.get(
   "/:userId/lesson/:lessonId",
   authorize(["admin", "teacher"]),
-  verifyIds({ params: ["userId", "lessonId"] }),
+  verifyIds(["userId", "lessonId"]),
   ProgressController.getProgressForLesson
 );
 router.delete(
   "/:progressId",
   authorize(["admin", "teacher"]),
-  verifyIds({ params: ["progressId"] }),
+  verifyIds(["progressId"]),
   ProgressController.deleteProgress
 );
 

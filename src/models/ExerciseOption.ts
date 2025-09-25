@@ -12,7 +12,7 @@ export class ExerciseOption {
   @Column({ name: "is_correct", type: "boolean", default: false })
   isCorrect!: boolean;
 
-  @ManyToOne(() => Exercise, (exercise: Exercise) => exercise.options, {
+  @ManyToOne(() => Exercise, (exercise) => exercise.options, {
     onDelete: "CASCADE",
   })
   exercise!: Exercise;

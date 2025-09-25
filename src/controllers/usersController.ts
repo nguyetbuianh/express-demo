@@ -1,20 +1,18 @@
 import { NextFunction, Request, Response } from "express";
-import { userService } from "../services/UserService.ts";
-import { successResponse } from "../utils/Response.ts";
-import { asyncHandler } from "../middlewares/AsyncHandler.ts";
+import { userService } from "../services/userService.ts";
+import { successResponse } from "../utils/response.ts";
+import { asyncHandler } from "../middlewares/asyncHandler.ts";
 import { BadRequestError } from "../utils/appError.ts";
 
 async function register(req: Request, res: Response, next: NextFunction) {
   const { email, password, fullName } = req.body;
   const avatarFile = req.file;
-  const user = await userService.registerUser(email, password, fullName, avatarFile);
-
+  const user = await userService.registerUser( req.body, avatarFile);
   return successResponse(res, user, 201, "User registered successfully");
 }
 
 async function login(req: Request, res: Response, next: NextFunction) {
-  const { email, password } = req.body;
-  const result = await userService.loginUser(email, password);
+  const result = await userService.loginUser(req.body);
 
   return successResponse(res, result, 200, "User logged in successfully");
 }

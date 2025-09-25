@@ -32,7 +32,7 @@ export class Lesson extends BaseEntity {
   @Column({ name: "image_url", type: "text", nullable: true })
   imageUrl?: string;
 
-  @ManyToOne(() => Course, (course: Course) => course.lessons, {
+  @ManyToOne(() => Course, (course) => course.lessons, {
     onDelete: "CASCADE",
   })
   course!: Course;

@@ -21,7 +21,7 @@ export class Vocabulary {
   @Column({ type: "text", nullable: true })
   image_url?: string;
 
-  @ManyToOne(() => Lesson, (lesson: Lesson) => lesson.vocabulary, {
+  @ManyToOne(() => Lesson, (lesson) => lesson.vocabulary, {
     onDelete: "CASCADE",
   })
   lesson!: Lesson;

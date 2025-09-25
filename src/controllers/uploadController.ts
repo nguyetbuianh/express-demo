@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { saveFile } from "../services/UploadService.ts";
+import { saveFile } from "../services/uploadService.ts";
 import { BadRequestError } from "../utils/appError.ts";
 
 export const uploadFile = (req: Request, res: Response, next: NextFunction) => {

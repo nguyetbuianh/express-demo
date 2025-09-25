@@ -1,4 +1,14 @@
 import { AppDataSource } from "../config/DataSource.ts";
+import {
+  CreateLessonDtoType,
+  UpdateLessonDtoType,
+} from "../dtos/lesson/lessonInputDto.ts";
+import {
+  LessonDetailResponseDto,
+  LessonDetailResponseDtoType,
+  LessonResponseDto,
+  LessonResponseDtoType,
+} from "../dtos/lesson/lessonResponseDto.ts";
 import { Course } from "../models/Course.ts";
 import { Lesson } from "../models/Lesson.ts";
 import { NotFoundError } from "../utils/appError.ts";
@@ -7,61 +17,74 @@ class LessonService {
   private courseRepo = AppDataSource.getRepository(Course);
   private lessonRepo = AppDataSource.getRepository(Lesson);
 
-  async createLesson(courseId: number, lessonData: Partial<Lesson>) {
+  async createLesson(
+    courseId: number,
+    lessonData: CreateLessonDtoType
+  ): Promise<LessonResponseDtoType> {
     const course = await this.courseRepo.findOne({
       where: { id: courseId },
     });
     if (!course) throw new NotFoundError("Course not found");
 
     const lesson = this.lessonRepo.create({ ...lessonData, course });
+    const savedLesson = await this.lessonRepo.save(lesson);
 
-    return await this.lessonRepo.save(lesson);
+    return LessonResponseDto.parse(savedLesson);
   }
 
-  async updateLesson(lessonId: number, lessonData: Partial<Lesson>) {
+  async updateLesson(
+    lessonId: number,
+    lessonData: UpdateLessonDtoType
+  ): Promise<LessonResponseDtoType> {
     const lesson = await this.lessonRepo.findOne({
       where: { id: lessonId },
     });
     if (!lesson) throw new NotFoundError("Lesson not found");
 
     Object.assign(lesson, lessonData);
+    const savedLesson = await this.lessonRepo.save(lesson);
 
-    return await this.lessonRepo.save(lesson);
+    return LessonResponseDto.parse(savedLesson);
   }
 
-  async deleteLesson(lessonId: number) {
-    const lesson = await this.lessonRepo.findOne({
-      where: { id: lessonId },
-    });
-    if (!lesson) throw new NotFoundError("Lesson not found");
+  async deleteLesson(lessonId: number): Promise<void> {
+    const result = await this.lessonRepo.delete(lessonId);
 
-    return await this.lessonRepo.remove(lesson);
+    if (result.affected === 0) {
+      throw new NotFoundError("Lesson not found");
+    }
   }
 
-  async getLessons() {
-    return await this.lessonRepo.find({
+  async getLessons(): Promise<LessonResponseDtoType[]> {
+    const lessons = await this.lessonRepo.find({
       order: { createdAt: "DESC" },
+      relations: ["course"],
     });
+
+    return lessons.map((lessons) => LessonResponseDto.parse(lessons));
   }
 
-  async getLessonsByCourse(courseId: number) {
+  async getLessonsByCourse(courseId: number): Promise<LessonResponseDtoType[]> {
     const course = await this.courseRepo.findOne({ where: { id: courseId } });
     if (!course) throw new NotFoundError("Course not found");
 
-    return await this.lessonRepo.find({
+    const lessons = await this.lessonRepo.find({
       where: { course: { id: courseId } },
+      relations: ["course"],
       order: { createdAt: "ASC" },
     });
+
+    return lessons.map((lessons) => LessonResponseDto.parse(lessons));
   }
 
-  async getLessonDetails(lessonId: number) {
+  async getLessonDetails(lessonId: number): Promise<LessonDetailResponseDtoType> {
     const lesson = await this.lessonRepo.findOne({
       where: { id: lessonId },
-      relations: ["course", "course.teacher"],
+      relations: ["course", "vocabulary", "exercises", "progress" ],
     });
     if (!lesson) throw new Error("Lesson not found");
 
-    return lesson;
+    return LessonDetailResponseDto.parse(lesson);
   }
 }
 

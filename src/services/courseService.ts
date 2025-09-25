@@ -2,12 +2,25 @@ import { AppDataSource } from "../config/DataSource.ts";
 import { NotFoundError } from "../utils/appError.ts";
 import { Course } from "../models/Course.ts";
 import { User } from "../models/User.ts";
+import {
+  CreateCourseDtoType,
+  UpdateCourseDtoType,
+} from "../dtos/course/courseInputDto.ts";
+import {
+  CourseDetailResponseDto,
+  CourseDetailResponseDtoType,
+  CourseResponseDto,
+  CourseResponseDtoType,
+} from "../dtos/course/courseResponseDto.ts";
 
 class CourseService {
   private courseRepo = AppDataSource.getRepository(Course);
   private userRepo = AppDataSource.getRepository(User);
 
-  async createCourse(creatorId: number, courseData: Partial<Course>) {
+  async createCourse(
+    creatorId: number,
+    courseData: CreateCourseDtoType
+  ): Promise<CourseResponseDtoType> {
     const user = await this.userRepo.findOne({ where: { id: creatorId } });
     if (!user) throw new NotFoundError("User not found");
 
@@ -15,35 +28,61 @@ class CourseService {
       ...courseData,
       teacher: user,
     });
+    const savedCourse = await this.courseRepo.save(course);
 
-    return await this.courseRepo.save(course);
+    return CourseResponseDto.parse(savedCourse);
   }
 
-  async updateCourse(courseId: number, courseData: Partial<Course>) {
-    const course = await this.courseRepo.findOne({ where: { id: courseId } });
+  async updateCourse(
+    courseId: number,
+    courseData: UpdateCourseDtoType
+  ): Promise<CourseResponseDtoType> {
+    const course = await this.courseRepo.findOne({
+      where: { id: courseId },
+      relations: ["teacher"],
+    });
     if (!course) throw new NotFoundError("Course not found");
 
+    delete courseData.teacherId;
     Object.assign(course, courseData);
 
-    return await this.courseRepo.save(course);
+    const savedCourse = await this.courseRepo.save(course);
+    return CourseResponseDto.parse(savedCourse);
   }
 
-  async deleteCourse(courseId: number) {
-    const course = await this.courseRepo.findOne({ where: { id: courseId } });
-    if (!course) throw new NotFoundError("Course not found");
-
-    return await this.courseRepo.remove(course);
+  async deleteCourse(courseId: number): Promise<void> {
+    const result = await this.courseRepo.delete(courseId);
+    if (result.affected === 0) {
+      throw new NotFoundError("Course not found");
+    }
   }
 
-  async getCourses() {
-    return await this.courseRepo.find({
+  async getCourses(): Promise<CourseResponseDtoType[]> {
+    const courses = await this.courseRepo.find({
       relations: ["teacher"],
       order: { createdAt: "DESC" },
     });
+
+    return courses.map((course) => CourseResponseDto.parse(course));
   }
 
-  async getCoursesForStudent(userId: number) {
-    return await this.courseRepo
+  async getCourseDetails(
+    courseId: number
+  ): Promise<CourseDetailResponseDtoType> {
+    const course = await this.courseRepo.findOne({
+      where: { id: courseId },
+      relations: ["teacher", "lessons", "payments"],
+    });
+
+    if (!course) {
+      throw new NotFoundError("Course not found");
+    }
+
+    return CourseDetailResponseDto.parse(course);
+  }
+
+  async getCoursesForStudent(userId: number): Promise<CourseResponseDtoType[]> {
+    const courses = await this.courseRepo
       .createQueryBuilder("course")
       .innerJoin(
         "course.payments",
@@ -57,9 +96,14 @@ class CourseService {
       .leftJoinAndSelect("course.teacher", "teacher")
       .orderBy("course.createdAt", "DESC")
       .getMany();
+
+    return courses.map((course) => CourseResponseDto.parse(course));
   }
 
-  async getCourseDetailsForStudent(courseId: number, userId: number) {
+  async getCourseDetailsForStudent(
+    courseId: number,
+    userId: number
+  ): Promise<CourseDetailResponseDtoType> {
     const course = await this.courseRepo
       .createQueryBuilder("course")
       .innerJoin(
@@ -77,10 +121,10 @@ class CourseService {
       .where("course.id = :courseId", { courseId })
       .getOne();
 
-    return course;
+    return CourseDetailResponseDto.parse(course);
   }
 
-  async getCoursesForTeacher(teacherId: number) {
+  async getCoursesForTeacher(teacherId: number): Promise<CourseResponseDtoType[]> {
     const teacher = await this.userRepo.findOne({ where: { id: teacherId } });
     if (!teacher) throw new NotFoundError("Teacher not found");
 
@@ -90,16 +134,16 @@ class CourseService {
       order: { createdAt: "DESC" },
     });
 
-    return courses;
+    return courses.map((course) => CourseResponseDto.parse(course));
   }
 
-  async getCourseDetailsForTeacher(courseId: number, teacherId: number) {
+  async getCourseDetailsForTeacher(courseId: number, teacherId: number): Promise<CourseDetailResponseDtoType>  {
     const course = await this.courseRepo.findOne({
       where: { id: courseId, teacher: { id: teacherId } },
       relations: ["teacher", "lessons", "payments"],
     });
 
-    return course;
+    return CourseDetailResponseDto.parse(course);
   }
 }
 

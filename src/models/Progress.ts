@@ -20,10 +20,10 @@ export class Progress extends BaseEntity {
   @Column({ type: "boolean", default: false })
   completed!: boolean;
 
-  @ManyToOne(() => User, (user: User) => user.progress, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.progress, { onDelete: "CASCADE" })
   user!: User;
 
-  @ManyToOne(() => Lesson, (lesson: Lesson) => lesson.progress, {
+  @ManyToOne(() => Lesson, (lesson) => lesson.progress, {
     onDelete: "CASCADE",
   })
   lesson!: Lesson;

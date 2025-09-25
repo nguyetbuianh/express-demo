@@ -3,25 +3,31 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User.ts";
 import { env } from "../config/env.ts";
-import { saveFile } from "./UploadService.ts";
+import { saveFile } from "./uploadService.ts";
 import { BadRequestError, NotFoundError } from "../utils/appError.ts";
+import { LoginDtoType, RegisterDtoType } from "../dtos/user/userInputDto.ts";
+import {
+  UserLoginResponseDto,
+  UserLoginResponseDtoType,
+  UserResponseDto,
+  UserResponseDtoType,
+} from "../dtos/user/userResponseDto.ts";
 
 class UserService {
   private userRepo = AppDataSource.getRepository(User);
 
   async registerUser(
-    email: string,
-    password: string,
-    fullName?: string,
+    userData: RegisterDtoType,
     avatarFile?: Express.Multer.File
-  ): Promise<Omit<User, "password">> {
-
-    const existingUser = await this.userRepo.findOne({ where: { email } });
+  ): Promise<UserResponseDtoType> {
+    const existingUser = await this.userRepo.findOne({
+      where: { email: userData.email },
+    });
     if (existingUser) {
       throw new BadRequestError("Email already registered");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
 
     let avatarUrl: string | undefined;
     if (avatarFile) {
@@ -29,31 +35,29 @@ class UserService {
     }
 
     const newUser = this.userRepo.create({
-      email,
+      email: userData.email,
       password: hashedPassword,
-      fullName: fullName,
+      fullName: userData.fullName,
+      role: userData.role || "student",
       avatarUrl: avatarUrl,
     });
 
     const savedUser = await this.userRepo.save(newUser);
 
-    const { password: _, ...userWithoutPassword } = savedUser;
-    return userWithoutPassword;
+    return UserResponseDto.parse(savedUser);
   }
 
-  async loginUser(
-    email: string,
-    password: string
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async loginUser(userData: LoginDtoType): Promise<UserLoginResponseDtoType> {
     const userRepo = AppDataSource.getRepository(User);
 
     const user = await userRepo.findOne({
-      where: { email },
+      where: { email: userData.email },
       select: ["id", "email", "password", "role", "fullName", "refreshToken"],
     });
+    console.log("Login result:", userData.email);
     if (!user) throw new NotFoundError("User not found");
 
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await bcrypt.compare(userData.password, user.password);
     if (!valid) throw new BadRequestError("Invalid credentials");
 
     const accessToken = jwt.sign(
@@ -71,7 +75,12 @@ class UserService {
     user.refreshToken = refreshToken;
     await userRepo.save(user);
 
-    return { accessToken, refreshToken };
+    const responseData = {
+      accessToken,
+      refreshToken,
+    };
+
+    return UserLoginResponseDto.parse(responseData);
   }
 
   async refreshAccessToken(refreshToken: string): Promise<string> {

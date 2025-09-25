@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { LessonController } from "../controllers/LessonController.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
-import { LessonCreateSchema, LessonUpdateSchema } from "../schemas/LessonSchema.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+import { LessonController } from "../controllers/lessonController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
+import { CreateLessonDto, UpdateLessonDto } from "../dtos/lesson/lessonInputDto.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 const router = Router();
 
@@ -15,32 +15,32 @@ router.get(
 router.post(
   "/",
   authorize(["teacher", "admin"]),
-  validateBody(LessonCreateSchema),
+  validateBody(CreateLessonDto),
   LessonController.createLesson
 );
 router.put(
   "/:lessonId",
   authorize(["teacher", "admin"]),
-  validateBody(LessonUpdateSchema),
-  verifyIds({ params: ["lessonId"] }),
+  validateBody(UpdateLessonDto),
+  verifyIds(["lessonId"]),
   LessonController.updateLesson
 );
 router.delete(
   "/:lessonId",
   authorize(["teacher", "admin"]),
-  verifyIds({ params: ["lessonId"] }),
+  verifyIds(["lessonId"]),
   LessonController.deleteLesson
 );
 router.get(
   "/course/:courseId",
   authorize(["admin", "teacher", "student"]),
-  verifyIds({ params: ["courseId"] }),
+  verifyIds(["courseId"]),
   LessonController.getLessonsByCourse
 );
 router.get(
   "/:lessonId",
   authorize(["admin", "teacher", "student"]),
-  verifyIds({ params: ["lessonId"] }),
+  verifyIds(["lessonId"]),
   LessonController.getLessonDetails
 );
 

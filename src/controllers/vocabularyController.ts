@@ -1,19 +1,15 @@
 import { NextFunction, Request, Response } from "express";
-import { vocabularyService } from "../services/VocabulayService.ts";
-import { BadRequestError, NotFoundError } from "../utils/appError.ts";
-import { successResponse } from "../utils/Response.ts";
-import { asyncHandler } from "../middlewares/AsyncHandler.ts";
+import { vocabularyService } from "../services/vocabulayService.ts";
+import { NotFoundError } from "../utils/appError.ts";
+import { asyncHandler } from "../middlewares/asyncHandler.ts";
+import { successResponse } from "../utils/response.ts";
 
 async function createVocabulary(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const lessonId = parseInt(req.params.lessonId);
-  if (isNaN(lessonId)) {
-    throw new BadRequestError("Invalid lesson ID");
-  }
-
+  const lessonId = parseInt(req.params.lessonId, 10);
   const vocab = await vocabularyService.createVocabulary(lessonId, req.body);
 
   return successResponse(res, vocab, 201, "Vocab created successfully");
@@ -25,10 +21,6 @@ async function getVocabularyByLesson(
   next: NextFunction
 ) {
   const lessonId = parseInt(req.params.lessonId);
-  if (isNaN(lessonId)) {
-    throw new BadRequestError("Invalid lesson ID");
-  }
-
   const vocabularies = await vocabularyService.getVocabularyByLesson(lessonId);
   if (!vocabularies || vocabularies.length === 0) {
     throw new NotFoundError("No vocabulary found for this lesson");
@@ -47,11 +39,7 @@ async function getVocabularyById(
   res: Response,
   next: NextFunction
 ) {
-  const vocabId = parseInt(req.params.vocabularyId);
-  if (isNaN(vocabId)) {
-    throw new BadRequestError("Invalid vocab ID");
-  }
-
+  const vocabId = parseInt(req.params.vocabularyId, 10);
   const vocab = await vocabularyService.getVocabularyById(vocabId);
   if (!vocab) {
     throw new NotFoundError("Vocabulary not found");
@@ -65,11 +53,7 @@ async function updateVocabulary(
   res: Response,
   next: NextFunction
 ) {
-  const vocabId = parseInt(req.params.vocabularyId);
-  if (isNaN(vocabId)) {
-    throw new BadRequestError("Invalid vocab ID");
-  }
-
+  const vocabId = parseInt(req.params.vocabularyId, 10);
   const updated = await vocabularyService.updateVocabulary(vocabId, req.body);
 
   return successResponse(res, updated, 200, "Vocab updated successfully");
@@ -80,12 +64,8 @@ async function deleteVocabulary(
   res: Response,
   next: NextFunction
 ) {
-  const id = parseInt(req.params.vocabularyId, 10);
-  if (isNaN(id)) {
-    throw new BadRequestError("Invalid vocab ID");
-  }
-
-  await vocabularyService.deleteVocabulary(id);
+  const vocabularyId = parseInt(req.params.vocabularyId, 10);
+  await vocabularyService.deleteVocabulary(vocabularyId);
 
   return successResponse(res, null, 200, "Vocab deleted successfully");
 }

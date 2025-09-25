@@ -1,33 +1,33 @@
 import { Router } from "express";
-import { ExerciseOptionController } from "../controllers/ExerciseOptionController.ts";
-import { authorize } from "../middlewares/Authorize.ts";
-import { validateBody } from "../middlewares/ValidateMiddleware.ts";
+import { ExerciseOptionController } from "../controllers/exerciseOptionController.ts";
+import { authorize } from "../middlewares/authorize.ts";
+import { validateBody } from "../middlewares/validateMiddleware.ts";
 import {
-  ExerciseOptionCreateSchema,
-  ExerciseOptionUpdateSchema,
-} from "../schemas/ExerciseOptionSchema.ts";
-import { verifyIds } from "../middlewares/VerifyIds.ts";
+  CreateExerciseOptionDto,
+  UpdateExerciseOptionDto,
+} from "../dtos/exerciseOption/exerciseOptionInputDto.ts";
+import { verifyIds } from "../middlewares/verifyIds.ts";
 
 const router = Router();
 
 router.post(
   "/:exerciseId",
   authorize(["teacher", "admin"]),
-  validateBody(ExerciseOptionCreateSchema),
-  verifyIds({ user: true, params: ["exerciseId"] }),
+  validateBody(CreateExerciseOptionDto),
+  verifyIds(["exerciseId"]),
   ExerciseOptionController.addOption
 );
 router.put(
   "/:exerciseOptId",
   authorize(["teacher", "admin"]),
-  validateBody(ExerciseOptionUpdateSchema),
-  verifyIds({ user: true, params: ["exerciseOptId"] }),
+  validateBody(UpdateExerciseOptionDto),
+  verifyIds(["exerciseOptId"]),
   ExerciseOptionController.updateOption
 );
 router.delete(
   "/:exerciseOptId",
   authorize(["teacher", "admin"]),
-  verifyIds({ user: true, params: ["exerciseOptId"] }),
+  verifyIds(["exerciseOptId"]),
   ExerciseOptionController.deleteOption
 );
 
