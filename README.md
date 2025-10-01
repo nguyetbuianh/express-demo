@@ -92,9 +92,9 @@ project-root
 1. Clone repo:
    git clone https://github.com/nguyetbuianh/express-demo.git
    cd express-demo
-2. Install dependencies:
+3. Install dependencies:
    npm install
-3. Configure environment variables (.env):
+4. Configure environment variables (.env):
     DB_HOST=your_DB_HOST
     DB_PORT=5432
     DB_USER=your_DB_USER  
@@ -103,9 +103,9 @@ project-root
     PORT=3000
     JWT_SECRET=your_JWT_SECRET
     JWT_REFRESH_SECRET=your_JWT_REFRESH_SECRET
-4. Run migrations (if using TypeORM/Prisma):
+5. Run migrations (if using TypeORM/Prisma):
    npm run migration:run
-5. Start server:
+6. Start server:
    npm run dev
 
 ## API Endpoints
