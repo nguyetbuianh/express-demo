@@ -18,28 +18,7 @@ This project manages users, courses, lessons, vocabularies, exercises, and track
 ---
 
 ## Project Structure
-project-root
-├── src
-│ ├── config/ # App configuration (DB, env)
-│ ├── controllers/ # Handle requests & responses
-| ├── dtos/  # Data Transfer Objects (validation & typing for requests/responses)
-| ├── lib/ # uploadImage
-│ ├── middlewares/ # Authenticate, Authorize, asyncHandler, error handling, validate body request, verify param Id
-│ ├── migrations/ # Database migrations
-| ├── models/ # Data models (BaseEntity, Course, Exercise, ExerciseOption, Lesson, Payment, Progress, User, Vocabulary)
-│ ├── routes/ # Express routes
-│ ├── services/ # Business logic
-│ ├── utils/ # Helpers (appError, pagination, response)
-│ └── index.ts # App entry point
-├── uploads/ # Static files (images)
-├── .env # Environment variables
-├── .gitignore # Files ignored by Git
-├── app.ts
-├── index.ts
-├── package-lock.json
-├── package.json
-├── tsconfig.json
-└── README.md
+<pre> ```bash project-root ├── src │ ├── config/ # App configuration (DB, env) │ ├── controllers/ # Handle requests & responses │ ├── dtos/ # Data Transfer Objects (validation & typing for requests/responses) │ ├── lib/ # uploadImage │ ├── middlewares/ # Authenticate, Authorize, asyncHandler, error handling, validate body request, verify param Id │ ├── migrations/ # Database migrations │ ├── models/ # Data models (BaseEntity, Course, Exercise, ExerciseOption, Lesson, Payment, Progress, User, Vocabulary) │ ├── routes/ # Express routes │ ├── services/ # Business logic │ ├── utils/ # Helpers (appError, pagination, response) │ └── index.ts # App entry point │ ├── uploads/ # Static files (images) ├── .env # Environment variables ├── .gitignore # Files ignored by Git ├── app.ts ├── index.ts ├── package-lock.json ├── package.json ├── tsconfig.json └── README.md ``` </pre>
 
 ---
 
