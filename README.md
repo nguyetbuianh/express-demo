@@ -90,23 +90,23 @@ project-root
 ## Installation
 
 1. Clone repo:
-   git clone https://github.com/nguyetbuianh/express-demo.git
-   cd express-demo
+     git clone https://github.com/nguyetbuianh/express-demo.git
+     cd express-demo
 3. Install dependencies:
-   npm install
+     npm install
 4. Configure environment variables (.env):
-    DB_HOST=your_DB_HOST
-    DB_PORT=5432
-    DB_USER=your_DB_USER  
-    DB_PASSWORD=your_password               
-    DB_NAME=postgres                       
-    PORT=3000
-    JWT_SECRET=your_JWT_SECRET
-    JWT_REFRESH_SECRET=your_JWT_REFRESH_SECRET
+      DB_HOST=your_DB_HOST
+      DB_PORT=5432
+      DB_USER=your_DB_USER  
+      DB_PASSWORD=your_password               
+      DB_NAME=postgres                       
+      PORT=3000
+      JWT_SECRET=your_JWT_SECRET
+      JWT_REFRESH_SECRET=your_JWT_REFRESH_SECRET
 5. Run migrations (if using TypeORM/Prisma):
-   npm run migration:run
+     npm run migration:run
 6. Start server:
-   npm run dev
+     npm run dev
 
 ## API Endpoints
 ### User
