@@ -110,64 +110,64 @@ project-root
 
 ## API Endpoints
 ### User
-POST /users/register --> Register a new user account
-POST /users/login --> Authenticate user and return tokens
-POST /users/refresh --> Refresh access token using a valid refresh token  
+- POST /users/register --> Register a new user account
+- POST /users/login --> Authenticate user and return tokens
+- POST /users/refresh --> Refresh access token using a valid refresh token  
 
 ### Courses
-GET /courses --> Fetch all courses
-GET /courses/details/:courseId -->  Fetch detailed information of a course
-GET /courses/student --> Fetch all courses enrolled by the authenticated student 
-GET /courses/student/:courseid --> Fetch detailed information of a course for the authenticated student  
-GET /courses/teacher --> Fetch all courses created by the authenticated teacher  
-GET /courses/teacher/:courseId --> Fetch detailed information of a course for the authenticated teacher  
-POST /courses --> Create a new course
-PUT /courses/:courseId --> Update an existing course  
-DELETE /courses/:courseId --> Delete a course
+- GET /courses --> Fetch all courses
+- GET /courses/details/:courseId -->  Fetch detailed information of a course
+- GET /courses/student --> Fetch all courses enrolled by the authenticated student 
+- GET /courses/student/:courseid --> Fetch detailed information of a course for the authenticated student  
+- GET /courses/teacher --> Fetch all courses created by the authenticated teacher  
+- GET /courses/teacher/:courseId --> Fetch detailed information of a course for the authenticated teacher  
+- POST /courses --> Create a new course
+- PUT /courses/:courseId --> Update an existing course  
+- DELETE /courses/:courseId --> Delete a course
 
 ## Lessons
-GET /lessons --> Fetch all lessons
-GET /lessons/course/:courseId --> Fetch all lessons by course ID
-GET /lessons/:lessonId --> Fetch lesson details
-POST /lessons --> Create a new lesson
-PUT /lessons/lessonId --> Update an existing lesson 
-DELETE /lessons/lessonId --> Delete a lesson
+- GET /lessons --> Fetch all lessons
+- GET /lessons/course/:courseId --> Fetch all lessons by course ID
+- GET /lessons/:lessonId --> Fetch lesson details
+- POST /lessons --> Create a new lesson
+- PUT /lessons/lessonId --> Update an existing lesson 
+- DELETE /lessons/lessonId --> Delete a lesson
 
 ## Payments
-GET /payments --> Fetch all payments
-GET /payments/by-user --> Fetch all payments of the authenticated user  
-GET /payments/:courseId/has-access --> Check if the authenticated user has paid for the course and has access.
-POST /payments --> Create a new payment  
-PATCH /payments/:paymentId/status --> Update the status of a payment  
+- GET /payments --> Fetch all payments
+- GET /payments/by-user --> Fetch all payments of the authenticated user  
+- GET /payments/:courseId/has-access --> Check if the authenticated user has paid for the course and has access.
+- POST /payments --> Create a new payment  
+- PATCH /payments/:paymentId/status --> Update the status of a payment  
 
 ## Progress
-GET /progress/my-progress --> Fetch progress of the authenticated user  
-GET /progress/lesson/:lessonId/my-progress --> Fetch lesson progress of the authenticated user 
-GET /progress/:progressId --> Fetch the progress details
-GET /progress/user/:userId --> Fetch all progress of a specific user  
-GET /progress/:userId/lesson/:lessonId --> Fetch lesson progress of a specific student 
-POST /progress --> Create a new progress
-PUT /progress/:progressId --> Update an existing progress
-DELETE /progress/progressId --> Delete a progress
+- GET /progress/my-progress --> Fetch progress of the authenticated user  
+- GET /progress/lesson/:lessonId/my-progress --> Fetch lesson progress of the authenticated user 
+- GET /progress/:progressId --> Fetch the progress details
+- GET /progress/user/:userId --> Fetch all progress of a specific user  
+- GET /progress/:userId/lesson/:lessonId --> Fetch lesson progress of a specific student 
+- POST /progress --> Create a new progress
+- PUT /progress/:progressId --> Update an existing progress
+- DELETE /progress/progressId --> Delete a progress
 
 ## Vocabularies
-GET /vocabularies/lessons/:lessonId --> Fetch all vocabularies of a specific lesson  
-GET /vocabularies/:vocabularyId --> Fetch vocabulary details
-POST /vocabularies/lessons/:lessonId --> Create a new vocabulary for a lesson 
-PUT /vocabularies/:vocabularyId --> Update an existing vocabulary 
-DELETE /vocabularies/:vocabularyId --> Delete a vocabulary
+- GET /vocabularies/lessons/:lessonId --> Fetch all vocabularies of a specific lesson  
+- GET /vocabularies/:vocabularyId --> Fetch vocabulary details
+- POST /vocabularies/lessons/:lessonId --> Create a new vocabulary for a lesson 
+- PUT /vocabularies/:vocabularyId --> Update an existing vocabulary 
+- DELETE /vocabularies/:vocabularyId --> Delete a vocabulary
 
 ## Exercises
-GET /exercises/lesson/:lessonId --> Fetch all exercises of a specific lesson  
-GET /exercises/:exerciseId --> Fetch exercise details
-POST /exercises/:lessonId --> Create a new exercise for a lesson 
-PUT /exercises/:exerciseId --> Update an existing exercise
-DELETE /exercises/:exerciseId --> Delete a exercise
+- GET /exercises/lesson/:lessonId --> Fetch all exercises of a specific lesson  
+- GET /exercises/:exerciseId --> Fetch exercise details
+- POST /exercises/:lessonId --> Create a new exercise for a lesson 
+- PUT /exercises/:exerciseId --> Update an existing exercise
+- DELETE /exercises/:exerciseId --> Delete a exercise
 
 ## Exercise-options
-POST /exercise-options/:exerciseId --> Create a new exercise option
-PUT /exercise-options/:exerciseOptId --> Update an existing exercise option
-DELETE /exercise option/:exerciseOptId --> Delete a exercise option
+- POST /exercise-options/:exerciseId --> Create a new exercise option
+- PUT /exercise-options/:exerciseOptId --> Update an existing exercise option
+- DELETE /exercise option/:exerciseOptId --> Delete a exercise option
 
 
 
