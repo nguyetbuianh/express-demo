@@ -6,7 +6,7 @@ import {
   CreateExerciseOptionDto,
   UpdateExerciseOptionDto,
 } from "../dtos/exerciseOption/exerciseOptionInputDto.ts";
-import { verifyIds } from "../middlewares/verifyIds.ts";
+import { verifyIds } from "../middlewares/verifyParams.ts";
 
 const router = Router();
 

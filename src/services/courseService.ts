@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/DataSource.ts";
+import { AppDataSource } from "../config/dataSource.ts";
 import { NotFoundError } from "../utils/appError.ts";
 import { Course } from "../models/Course.ts";
 import { User } from "../models/User.ts";
@@ -12,6 +12,7 @@ import {
   CourseResponseDto,
   CourseResponseDtoType,
 } from "../dtos/course/courseResponseDto.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
 class CourseService {
   private courseRepo = AppDataSource.getRepository(Course);
@@ -57,13 +58,19 @@ class CourseService {
     }
   }
 
-  async getCourses(): Promise<CourseResponseDtoType[]> {
-    const courses = await this.courseRepo.find({
+  async getCourses(
+    pagination: PaginationParams
+  ): Promise<{ courseData: CourseResponseDtoType[]; total: number }> {
+    const [courses, total] = await this.courseRepo.findAndCount({
       relations: ["teacher"],
-      order: { createdAt: "DESC" },
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
     });
 
-    return courses.map((course) => CourseResponseDto.parse(course));
+    return {
+      courseData: courses.map((course) => CourseResponseDto.parse(course)),
+      total,
+    };
   }
 
   async getCourseDetails(
@@ -124,7 +131,9 @@ class CourseService {
     return CourseDetailResponseDto.parse(course);
   }
 
-  async getCoursesForTeacher(teacherId: number): Promise<CourseResponseDtoType[]> {
+  async getCoursesForTeacher(
+    teacherId: number
+  ): Promise<CourseResponseDtoType[]> {
     const teacher = await this.userRepo.findOne({ where: { id: teacherId } });
     if (!teacher) throw new NotFoundError("Teacher not found");
 
@@ -137,7 +146,10 @@ class CourseService {
     return courses.map((course) => CourseResponseDto.parse(course));
   }
 
-  async getCourseDetailsForTeacher(courseId: number, teacherId: number): Promise<CourseDetailResponseDtoType>  {
+  async getCourseDetailsForTeacher(
+    courseId: number,
+    teacherId: number
+  ): Promise<CourseDetailResponseDtoType> {
     const course = await this.courseRepo.findOne({
       where: { id: courseId, teacher: { id: teacherId } },
       relations: ["teacher", "lessons", "payments"],

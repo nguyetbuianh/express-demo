@@ -1,12 +1,9 @@
-import { AppDataSource } from "../config/DataSource.ts";
+import { AppDataSource } from "../config/dataSource.ts";
 import { Exercise } from "../models/Exercise.ts";
 import { Lesson } from "../models/Lesson.ts";
 import { ExerciseOption } from "../models/ExerciseOption.ts";
 import { NotFoundError } from "../utils/appError.ts";
-import {
-  CreateExerciseDto,
-  CreateExerciseDtoType,
-} from "../dtos/exercise/exerciseInputDto.ts";
+import { CreateExerciseDtoType } from "../dtos/exercise/exerciseInputDto.ts";
 import { CreateExerciseOptionDtoType } from "../dtos/exerciseOption/exerciseOptionInputDto.ts";
 import {
   ExerciseDetailResponseDto,

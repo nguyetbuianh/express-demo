@@ -2,8 +2,11 @@ import { Router } from "express";
 import { VocabularyController } from "../controllers/vocabularyController.ts";
 import { authorize } from "../middlewares/authorize.ts";
 import { validateBody } from "../middlewares/validateMiddleware.ts";
-import { CreateVocabularyDto, UpdateVocabularyDto } from "../dtos/vocabulary/vocabInputDto.ts";
-import { verifyIds } from "../middlewares/verifyIds.ts";
+import {
+  CreateVocabularyDto,
+  UpdateVocabularyDto,
+} from "../dtos/vocabulary/vocabInputDto.ts";
+import { verifyIds, verifyPagination } from "../middlewares/verifyParams.ts";
 
 const router = Router();
 
@@ -17,6 +20,8 @@ router.post(
 router.get(
   "/lessons/:lessonId",
   authorize(["student", "teacher"]),
+  verifyIds(["lessonId"]),
+  verifyPagination,
   VocabularyController.getVocabularyByLesson
 );
 router.get(

@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/DataSource.ts";
+import { AppDataSource } from "../config/dataSource.ts";
 import {
   CreateLessonDtoType,
   UpdateLessonDtoType,
@@ -12,6 +12,7 @@ import {
 import { Course } from "../models/Course.ts";
 import { Lesson } from "../models/Lesson.ts";
 import { NotFoundError } from "../utils/appError.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
 class LessonService {
   private courseRepo = AppDataSource.getRepository(Course);
@@ -55,13 +56,19 @@ class LessonService {
     }
   }
 
-  async getLessons(): Promise<LessonResponseDtoType[]> {
-    const lessons = await this.lessonRepo.find({
-      order: { createdAt: "DESC" },
+  async getLessons(
+    pagination: PaginationParams
+  ): Promise<{ lessonData: LessonResponseDtoType[]; total: number }> {
+    const [lessons, total] = await this.lessonRepo.findAndCount({
       relations: ["course"],
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
     });
 
-    return lessons.map((lessons) => LessonResponseDto.parse(lessons));
+    return {
+      lessonData: lessons.map((lessons) => LessonResponseDto.parse(lessons)),
+      total,
+    };
   }
 
   async getLessonsByCourse(courseId: number): Promise<LessonResponseDtoType[]> {
@@ -77,10 +84,12 @@ class LessonService {
     return lessons.map((lessons) => LessonResponseDto.parse(lessons));
   }
 
-  async getLessonDetails(lessonId: number): Promise<LessonDetailResponseDtoType> {
+  async getLessonDetails(
+    lessonId: number
+  ): Promise<LessonDetailResponseDtoType> {
     const lesson = await this.lessonRepo.findOne({
       where: { id: lessonId },
-      relations: ["course", "vocabulary", "exercises", "progress" ],
+      relations: ["course", "vocabulary", "exercises", "progress"],
     });
     if (!lesson) throw new Error("Lesson not found");
 

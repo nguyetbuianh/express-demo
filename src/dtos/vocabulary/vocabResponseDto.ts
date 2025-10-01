@@ -7,7 +7,11 @@ export const VocabResponseDto = z.object({
   example: z.string().nullable().optional(),
   audio_url: z.string().nullable().optional(),
   image_url: z.string().nullable().optional(),
-  lessonId: z.number(), 
+  lesson: z.object({
+    id: z.number(),
+    title: z.string(),
+    content: z.string(),
+  }),
 });
 
 export type VocabResponseDtoType = z.infer<typeof VocabResponseDto>;

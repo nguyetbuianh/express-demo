@@ -7,12 +7,9 @@ import {
 } from "../utils/appError.ts";
 import { successResponse } from "../utils/response.ts";
 import { asyncHandler } from "../middlewares/asyncHandler.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
-async function createProgress(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+async function createProgress(req: Request, res: Response, next: NextFunction) {
   if (!req.user) throw new UnauthorizedError();
   const progress = await progressService.createProgress(req.user.id, req.body);
 
@@ -34,11 +31,7 @@ async function getProgressById(
   return successResponse(res, progress, 200, "Progress fetched successfully");
 }
 
-async function updateProgress(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+async function updateProgress(req: Request, res: Response, next: NextFunction) {
   const progressId = parseInt(req.params.progressId, 10);
   const progress = await progressService.getProgressById(progressId);
   if (!progress) throw new NotFoundError("Progress not found");
@@ -64,13 +57,31 @@ async function getProgressByUser(
   res: Response,
   next: NextFunction
 ) {
-  const userId = parseInt(req.params.userId, 10);
-  const progresses = await progressService.getProgressByUser(userId);
-  if (!progresses || progresses.length === 0) {
+  const page = parseInt(req.query.page as string, 10);
+  const limit = parseInt(req.query.limit as string, 10);
+
+  const pagination: PaginationParams = { page, limit };
+
+  const { progressData, total } = await progressService.getProgressByUser(
+    req.user.id,
+    pagination
+  );
+  if (!progressData || progressData.length === 0) {
     throw new NotFoundError("No progress found for this user");
   }
 
-  return successResponse(res, progresses, 200, "Progress fetched successfully");
+  return successResponse(
+    res,
+    progressData,
+    200,
+    "Progress fetched successfully",
+    {
+      page,
+      limit,
+      totalItems: total,
+      totalPages: Math.ceil(total / limit),
+    }
+  );
 }
 
 async function getProgressOfUser(
@@ -80,16 +91,30 @@ async function getProgressOfUser(
 ) {
   if (!req.user) throw new UnauthorizedError();
 
-  const progresses = await progressService.getProgressByUser(req.user.id);
-  if (!progresses || progresses.length === 0) {
+  const page = parseInt(req.query.page as string, 10);
+  const limit = parseInt(req.query.limit as string, 10);
+
+  const pagination: PaginationParams = { page, limit };
+
+  const { progressData, total } = await progressService.getProgressByUser(
+    req.user.id,
+    pagination
+  );
+  if (!progressData || progressData.length === 0) {
     throw new NotFoundError("No progress found for this user");
   }
 
   return successResponse(
     res,
-    progresses,
+    progressData,
     200,
-    "Progress of user fetched successfully"
+    "Progress of user fetched successfully",
+    {
+      page,
+      limit,
+      totalItems: total,
+      totalPages: Math.ceil(total / limit),
+    }
   );
 }
 

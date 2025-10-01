@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { lessonService } from "../services/lessonService.ts";
 import { successResponse } from "../utils/response.ts";
 import { asyncHandler } from "../middlewares/asyncHandler.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
 async function createLesson(req: Request, res: Response, next: NextFunction) {
   const { courseId, ...lessonData } = req.body;
@@ -25,9 +26,19 @@ async function deleteLesson(req: Request, res: Response, next: NextFunction) {
 }
 
 async function getLessons(req: Request, res: Response, next: NextFunction) {
-  const lessons = await lessonService.getLessons();
+  const page = parseInt(req.query.page as string, 10);
+  const limit = parseInt(req.query.limit as string, 10);
 
-  return successResponse(res, lessons, 200, "Lesson fetched successfully");
+  const pagination: PaginationParams = { page, limit };
+
+  const { lessonData, total } = await lessonService.getLessons(pagination);
+
+  return successResponse(res, lessonData, 200, "Lesson fetched successfully", {
+    page,
+    limit,
+    totalItems: total,
+    totalPages: Math.ceil(total / limit),
+  });
 }
 
 async function getLessonsByCourse(

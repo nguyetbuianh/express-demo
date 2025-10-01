@@ -3,7 +3,7 @@ import cors from "cors";
 import { errorHandler } from "./src/middlewares/errorHandler.ts";
 import { logger } from "./src/middlewares/logger.ts";
 import userRoutes from "./src/routes/userRoutes.ts";
-import { AppDataSource } from "./src/config/DataSource.ts";
+import { AppDataSource } from "./src/config/dataSource.ts";
 import courseRoutes from "./src/routes/courseRoutes.ts";
 import lessonRoutes from "./src/routes/lessonRoutes.ts";
 import paymentRoutes from "./src/routes/paymentRoutes.ts";
