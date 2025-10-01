@@ -90,7 +90,7 @@ project-root
 ## Installation
 
 1. Clone repo:
-   git clone https://github.com/nguyetbuianh/express-demo
+   git clone https://github.com/nguyetbuianh/express-demo.git
    cd express-demo
 2. Install dependencies:
    npm install
