@@ -3,7 +3,7 @@ import { ProgressController } from "../controllers/progressController.ts";
 import { authorize } from "../middlewares/authorize.ts";
 import { CreateProgressDto, UpdateProgressDto } from "../dtos/progress/progressInputDtp.ts";
 import { validateBody } from "../middlewares/validateMiddleware.ts";
-import { verifyIds } from "../middlewares/verifyIds.ts";
+import { verifyIds, verifyPagination } from "../middlewares/verifyParams.ts";
 
 const router = Router();
 
@@ -16,6 +16,7 @@ router.post(
 router.get(
   "/my-progress",
   authorize(["student"]),
+  verifyPagination,
   ProgressController.getProgressOfUser
 );
 router.get(
@@ -41,6 +42,7 @@ router.get(
   "/user/:userId",
   authorize(["admin", "teacher"]),
   verifyIds(["userId"]),
+  verifyPagination,
   ProgressController.getProgressByUser
 );
 router.get(

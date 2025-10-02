@@ -3,13 +3,14 @@ import { CourseController } from "../controllers/courseController.ts";
 import { authorize } from "../middlewares/authorize.ts";
 import { validateBody } from "../middlewares/validateMiddleware.ts";
 import { CreateCourseDto, UpdateCourseDto } from "../dtos/course/courseInputDto.ts";
-import { verifyIds } from "../middlewares/verifyIds.ts";
+import { verifyPagination, verifyIds } from "../middlewares/verifyParams.ts";
 
 const router = Router();
 
 router.get(
   "/",
   authorize(["admin"]),
+  verifyPagination,
   CourseController.getCourses
 );
 router.get(

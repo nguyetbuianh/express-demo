@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/DataSource.ts";
+import { AppDataSource } from "../config/dataSource.ts";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User.ts";
@@ -54,7 +54,6 @@ class UserService {
       where: { email: userData.email },
       select: ["id", "email", "password", "role", "fullName", "refreshToken"],
     });
-    console.log("Login result:", userData.email);
     if (!user) throw new NotFoundError("User not found");
 
     const valid = await bcrypt.compare(userData.password, user.password);

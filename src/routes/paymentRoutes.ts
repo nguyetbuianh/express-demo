@@ -3,7 +3,7 @@ import { PaymentController } from "../controllers/paymentController.ts";
 import { authorize } from "../middlewares/authorize.ts";
 import { validateBody } from "../middlewares/validateMiddleware.ts";
 import { CreatePaymentDto, UpdatePaymentStatusDto } from "../dtos/payment/paymentInputDto.ts";
-import { verifyIds } from "../middlewares/verifyIds.ts";
+import { verifyIds, verifyPagination } from "../middlewares/verifyParams.ts";
 
 
 const router = Router();
@@ -11,7 +11,8 @@ const router = Router();
 router.get(
   "/",
   authorize(["admin"]),
-  PaymentController.getAllPayments
+  verifyPagination,
+  PaymentController.getPayments
 );
 router.post(
   "/",

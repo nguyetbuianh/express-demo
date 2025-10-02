@@ -1,23 +1,32 @@
-import { AppDataSource } from "../config/DataSource.ts";
-import { CreatePaymentDtoType, UpdatePaymentStatusDtoType } from "../dtos/payment/paymentInputDto.ts";
+import { AppDataSource } from "../config/dataSource.ts";
+import {
+  CreatePaymentDtoType,
+  UpdatePaymentStatusDtoType,
+} from "../dtos/payment/paymentInputDto.ts";
 import {
   PaymentResponseDto,
   PaymentResponseDtoType,
 } from "../dtos/payment/paymentResponseDto.ts";
 import { Payment, Status, statusArray } from "../models/Payment.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
 class PaymentService {
   private paymentRepo = AppDataSource.getRepository(Payment);
 
-  async getAllPayments(): Promise<PaymentResponseDtoType[]> {
-    const savedPayment = await this.paymentRepo.find({
+  async getPayments(
+    pagination: PaginationParams
+  ): Promise<{ paymentData: PaymentResponseDtoType[]; total: number }> {
+    const [payment, total] = await this.paymentRepo.findAndCount({
       relations: ["user", "course"],
-      order: { createdAt: "DESC" },
+      order: { id: "ASC" },
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
     });
 
-    return savedPayment.map((savedPayment) =>
-      PaymentResponseDto.parse(savedPayment)
-    );
+    return {
+      paymentData: payment.map((payment) => PaymentResponseDto.parse(payment)),
+      total,
+    };
   }
 
   async createPayment(
@@ -49,7 +58,10 @@ class PaymentService {
     return payment.map((payment) => PaymentResponseDto.parse(payment));
   }
 
-  async updatePaymentStatus(paymentId: number, paymentData: UpdatePaymentStatusDtoType): Promise<PaymentResponseDtoType> {
+  async updatePaymentStatus(
+    paymentId: number,
+    paymentData: UpdatePaymentStatusDtoType
+  ): Promise<PaymentResponseDtoType> {
     const payment = await this.paymentRepo.findOne({
       where: { id: paymentId },
       relations: ["user", "course"],
@@ -57,7 +69,7 @@ class PaymentService {
     if (!payment) throw new Error("Payment not found");
 
     payment.status = paymentData.status;
-    const savedPayment =  await this.paymentRepo.save(payment);
+    const savedPayment = await this.paymentRepo.save(payment);
 
     return PaymentResponseDto.parse(savedPayment);
   }

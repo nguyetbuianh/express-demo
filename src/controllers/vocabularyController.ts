@@ -3,6 +3,7 @@ import { vocabularyService } from "../services/vocabulayService.ts";
 import { NotFoundError } from "../utils/appError.ts";
 import { asyncHandler } from "../middlewares/asyncHandler.ts";
 import { successResponse } from "../utils/response.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
 async function createVocabulary(
   req: Request,
@@ -21,16 +22,30 @@ async function getVocabularyByLesson(
   next: NextFunction
 ) {
   const lessonId = parseInt(req.params.lessonId);
-  const vocabularies = await vocabularyService.getVocabularyByLesson(lessonId);
-  if (!vocabularies || vocabularies.length === 0) {
+  const page = parseInt(req.query.page as string, 10);
+  const limit = parseInt(req.query.limit as string, 10);
+
+  const pagination: PaginationParams = { page, limit };
+
+  const { vocabData, total } = await vocabularyService.getVocabularyByLesson(
+    lessonId,
+    pagination
+  );
+  if (!vocabData || vocabData.length === 0) {
     throw new NotFoundError("No vocabulary found for this lesson");
   }
 
   return successResponse(
     res,
-    vocabularies,
+    vocabData,
     200,
-    "Vocabularies fetched successfully"
+    "Vocabularies fetched successfully",
+    {
+      page,
+      limit,
+      totalItems: total,
+      totalPages: Math.ceil(total / limit),
+    }
   );
 }
 

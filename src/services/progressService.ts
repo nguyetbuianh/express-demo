@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/DataSource.ts";
+import { AppDataSource } from "../config/dataSource.ts";
 import {
   CreateProgressDtoType,
   UpdateProgressDtoType,
@@ -9,6 +9,7 @@ import {
 } from "../dtos/progress/progressResponseDto.ts";
 import { Progress } from "../models/Progress.ts";
 import { NotFoundError } from "../utils/appError.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
 class ProgressService {
   private progressRepo = AppDataSource.getRepository(Progress);
@@ -52,23 +53,37 @@ class ProgressService {
     if (!progress) throw new NotFoundError("Progress not found");
 
     if (progressData.score !== undefined) progress.score = progressData.score;
-    if (progressData.completed !== undefined) progress.completed = progressData.completed;
+    if (progressData.completed !== undefined)
+      progress.completed = progressData.completed;
     const updatedProgress = await this.progressRepo.save(progress);
 
     return ProgressResponseDto.parse(updatedProgress);
   }
 
-  async getProgressByUser(userId: number): Promise<ProgressResponseDtoType[]> {
-    const progress =  await this.progressRepo.find({
+  async getProgressByUser(
+    userId: number,
+    pagination: PaginationParams
+  ): Promise<{ progressData: ProgressResponseDtoType[]; total: number }> {
+    const [progress, total] = await this.progressRepo.findAndCount({
       where: { user: { id: userId } },
       relations: ["lesson", "lesson.course"],
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
     });
 
-    return progress.map((progress) => ProgressResponseDto.parse(progress));
+    return {
+      progressData: progress.map((progress) =>
+        ProgressResponseDto.parse(progress)
+      ),
+      total,
+    };
   }
 
-  async getProgressForLesson(userId: number, lessonId: number): Promise<ProgressResponseDtoType> {
-    const progress =   await this.progressRepo.findOne({
+  async getProgressForLesson(
+    userId: number,
+    lessonId: number
+  ): Promise<ProgressResponseDtoType> {
+    const progress = await this.progressRepo.findOne({
       where: { user: { id: userId }, lesson: { id: lessonId } },
       relations: ["lesson", "lesson.course"],
     });

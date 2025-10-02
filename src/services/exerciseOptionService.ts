@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/DataSource.ts";
+import { AppDataSource } from "../config/dataSource.ts";
 import { ExerciseOption } from "../models/ExerciseOption.ts";
 import { Exercise } from "../models/Exercise.ts";
 import { NotFoundError } from "../utils/appError.ts";

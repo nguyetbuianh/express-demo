@@ -1,4 +1,4 @@
-import { AppDataSource } from "../config/DataSource.ts";
+import { AppDataSource } from "../config/dataSource.ts";
 import { Vocabulary } from "../models/Vocabulary.ts";
 import { Lesson } from "../models/Lesson.ts";
 import { NotFoundError } from "../utils/appError.ts";
@@ -10,6 +10,7 @@ import {
   VocabResponseDto,
   VocabResponseDtoType,
 } from "../dtos/vocabulary/vocabResponseDto.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
 class VocabularyService {
   private vocabRepo = AppDataSource.getRepository(Vocabulary);
@@ -31,19 +32,26 @@ class VocabularyService {
   }
 
   async getVocabularyByLesson(
-    lessonId: number
-  ): Promise<VocabResponseDtoType[]> {
-    const vocabs = await this.vocabRepo.find({
+    lessonId: number,
+    pagination: PaginationParams
+  ): Promise<{ vocabData: VocabResponseDtoType[]; total: number }> {
+    const [vocabs, total] = await this.vocabRepo.findAndCount({
       where: { lesson: { id: lessonId } },
       relations: ["lesson"],
+      order: { id: "ASC" },
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
     });
 
-    return vocabs.map((vocab) => VocabResponseDto.parse(vocab));
+    return {
+      vocabData: vocabs.map((vocabs) => VocabResponseDto.parse(vocabs)),
+      total,
+    };
   }
 
   async getVocabularyById(vocabId: number): Promise<VocabResponseDtoType> {
     const vocab = await this.vocabRepo.findOne({
-      where: { id : vocabId },
+      where: { id: vocabId },
       relations: ["lesson"],
     });
 
@@ -54,7 +62,7 @@ class VocabularyService {
     vocabId: number,
     data: UpdateVocabularyDtoType
   ): Promise<VocabResponseDtoType> {
-    const vocab = await this.vocabRepo.findOne({ where: { id : vocabId} });
+    const vocab = await this.vocabRepo.findOne({ where: { id: vocabId } });
     if (!vocab) {
       throw new Error("Vocabulary not found");
     }

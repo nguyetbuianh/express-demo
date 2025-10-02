@@ -3,28 +3,34 @@ import { paymentService } from "../services/paymentService.ts";
 import { successResponse } from "../utils/response.ts";
 import { asyncHandler } from "../middlewares/asyncHandler.ts";
 import { UnauthorizedError } from "../utils/appError.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
-async function getAllPayments(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  const payments = await paymentService.getAllPayments();
+async function getPayments(req: Request, res: Response, next: NextFunction) {
+  const page = parseInt(req.query.page as string, 10);
+  const limit = parseInt(req.query.limit as string, 10);
 
-  return successResponse(res, payments, 200, "Course fetched successfully");
+  const pagination: PaginationParams = { page, limit };
+
+  const { paymentData, total } = await paymentService.getPayments(pagination);
+
+  return successResponse(
+    res,
+    paymentData,
+    200,
+    "Payment fetched successfully",
+    {
+      page,
+      limit,
+      totalItems: total,
+      totalPages: Math.ceil(total / limit),
+    }
+  );
 }
 
-async function createPayment(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+async function createPayment(req: Request, res: Response, next: NextFunction) {
   if (!req.user) throw new UnauthorizedError();
 
-  const payment = await paymentService.createPayment(
-    req.user.id,
-    req.body
-  );
+  const payment = await paymentService.createPayment(req.user.id, req.body);
 
   return successResponse(res, payment, 201, "Course created successfully");
 }
@@ -70,7 +76,7 @@ async function hasAccess(req: Request, res: Response, next: NextFunction) {
 }
 
 export const PaymentController = {
-  getAllPayments: asyncHandler(getAllPayments),
+  getPayments: asyncHandler(getPayments),
   createPayment: asyncHandler(createPayment),
   getPaymentByUser: asyncHandler(getPaymentByUser),
   updatePaymentStatus: asyncHandler(updatePaymentStatus),

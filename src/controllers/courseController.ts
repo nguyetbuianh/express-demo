@@ -3,12 +3,9 @@ import { courseService } from "../services/courseService.ts";
 import { NotFoundError, UnauthorizedError } from "../utils/appError.ts";
 import { successResponse } from "../utils/response.ts";
 import { asyncHandler } from "../middlewares/asyncHandler.ts";
+import { PaginationParams } from "../utils/pagination.ts";
 
-async function createCourse(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+async function createCourse(req: Request, res: Response, next: NextFunction) {
   if (!req.user) throw new UnauthorizedError();
   const course = await courseService.createCourse(req.user.id, req.body);
 
@@ -30,9 +27,19 @@ async function deleteCourse(req: Request, res: Response, next: NextFunction) {
 }
 
 async function getCourses(req: Request, res: Response, next: NextFunction) {
-  const courses = await courseService.getCourses();
+  const page = parseInt(req.query.page as string, 10);
+  const limit = parseInt(req.query.limit as string, 10);
 
-  return successResponse(res, courses, 200, "Course fetched successfully");
+  const pagination: PaginationParams = { page, limit };
+
+  const { courseData, total } = await courseService.getCourses(pagination);
+
+  return successResponse(res, courseData, 200, "Courses fetched successfully", {
+    page,
+    limit,
+    totalItems: total,
+    totalPages: Math.ceil(total / limit),
+  });
 }
 
 export async function getCourseDetails(
